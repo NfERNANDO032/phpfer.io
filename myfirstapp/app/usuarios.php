@@ -4,12 +4,11 @@
 
 function crearUsuario($request)
 {
-
     try {
         $passwordHash = password_hash($request['password'], PASSWORD_BCRYPT);
-        $sql = "INSERT INTO `usuarios`(`id`, `nombre`, `apellido`, `mail`, `password`, `idrol`)
-     VALUES (null,'{$request['nombre']}','{$request['apellido']}',
-     '{$request['mail']}','{$passwordHash}','{$request['idrol']}')";
+        $sql = "INSERT INTO usuarios (id, nombre, correo, password, id_rol)
+                VALUES (NULL, '{$request['nombre']}', '{$request['correo']}', '{$passwordHash}', '{$request['id_rol']}')";
+        
         $conexion = conectar();
         $conexion->query($sql);
         return true;
@@ -20,40 +19,28 @@ function crearUsuario($request)
 
 function listarUsuarios()
 {
-
-    $sql = "SELECT * FROM usuarios";        
+    $sql = "SELECT * FROM usuarios";
     $conexion = conectar();
     $resultado = $conexion->query($sql);
-    $usuarios = $resultado->fetch_all(MYSQLI_ASSOC); //fetch_all trae todos los registros
-    return $usuarios;
-    //fetch_assoc trae un solo registro
-    //ejem´plp de fetch_assoc
-    // $usuarios = $resultado->fetch_assoc();
-    //llenar un array con los datos de la base de datos
-    /*  while ($usuario = $resultado->fetch_assoc()) {
-        $usuarios[] = $usuario;
-    } */
-    
-    //echo json_encode($sql);
+    return $resultado->fetch_all(MYSQLI_ASSOC); // Trae todos los usuarios
 }
-function crearPermiso($nombre, $descripcion)
+
+
+function crearPermiso($request)
 {
-    $sql = "INSERT INTO `permisos`(`idpermiso`, `nombre`) VALUES (?, ?)";
+    $sql = "INSERT INTO permisos (id_permiso, nombre_permiso) VALUES (NULL, '{$request['nombre_permiso']}')";
     $conexion = conectar();
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("ss", $nombre, $descripcion); // "ss" indica que ambos parámetros son cadenas
-    $stmt->execute();
-    return $stmt->affected_rows > 0; // Devuelve true si se insertó correctamente
+    return $conexion->query($sql);
 }
+
 
 function crearRol($request)
 {
-    $sql = "INSERT INTO `roles`( `idrol`,`nombre`)VALUES (null,'{$request['nombre']}')";
+    $sql = "INSERT INTO roles(id_rol, nombre_rol) VALUES (NULL, '{$request['nombre_rol']}')";
     $conexion = conectar();
-   
-    $conexion->query($sql);
-    return 0; // Devuelve true si se insertó correctamente
+    return $conexion->query($sql);
 }
+
 
 function listarPermisos()
 {
@@ -71,29 +58,12 @@ function listarRoles()
     return $resultado->fetch_all(MYSQLI_ASSOC); // Trae todos los roles
 }
 
-function asignarPermisoARol($rolId, $permisoId)
+function asignarRolesPermisos ($request)
 {
-    // Conectar a la base de datos
+    $sql = "INSERT INTO rolypermiso (id_rol, id_permiso) VALUES ('{$request['id_rol']}', '{$request['id_permiso']}')";
     $conexion = conectar();
-    
-    // Preparar la consulta SQL
-    $sql = "INSERT INTO roles_permisos (idrol, idpermiso) VALUES (?, ?)";
-    
-    // Preparar la declaración
-    $stmt = $conexion->prepare($sql);
-    
-    // Vincular los parámetros (en este caso, dos enteros)
-    $stmt->bind_param("ii", $rolId, $permisoId);
-    
-    // Ejecutar la consulta
-    $stmt->execute();
-    
-    // Comprobar si se insertó correctamente
-    if ($stmt->affected_rows > 0) {
-        return true;  // Se insertó correctamente
-    } else {
-        return false; // No se insertó o hubo un problema
-    }
+    return $conexion->query($sql);
 }
+
 
 

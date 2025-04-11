@@ -8,7 +8,7 @@ header('Content-Type: application/json');
 $request = json_decode(file_get_contents("php://input"), true);
 
 if (
-    $_SERVER['REQUEST_URI'] == '/registrar/usuario'
+    $_SERVER['REQUEST_URI'] == '/crearUs'
     and $_SERVER['REQUEST_METHOD'] == 'POST'
 ) {
 
@@ -29,14 +29,14 @@ if (
 
 } else
 
-if (
-    $_SERVER['REQUEST_URI'] == '/listarusuarios'
-    and $_SERVER['REQUEST_METHOD'] == 'GET'
-) {
+    if (
+        $_SERVER['REQUEST_URI'] == '/listar'
+        and $_SERVER['REQUEST_METHOD'] == 'GET'
+    ) {
 
-    $usuarios = listarUsuarios();
-    echo json_encode($usuarios);
-
+        $usuarios = listarUsuarios();
+        echo json_encode($usuarios);
+//login
 } elseif (
     $_SERVER['REQUEST_URI'] == '/login'
     and $_SERVER['REQUEST_METHOD'] == 'POST'
@@ -60,29 +60,26 @@ if (
 
 
 } else {
-    echo json_encode(['error' => 'Ruta no encontrada']);
+    echo json_encode(['error' => 'Ruta no encontrada']);// aca arriba ya esta
+
+
+    //listar los usuarios creados o los que ya exuisten en la base de datos
 }
-if ($_SERVER['REQUEST_URI'] == '/listarusuarios' && $_SERVER['REQUEST_METHOD'] == 'GET') {
-    $usuarios = listarUsuarios();
-    echo json_encode($usuarios);
-} 
 
 // Crear un nuevo permiso
-if ($_SERVER['REQUEST_URI'] == '/crearpermiso' && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $nombre = $data['nombre'];
-    $descripcion = $data['descripcion'];
-    $resultado = crearPermiso($nombre, $descripcion);
-    echo json_encode(['success' => $resultado]);
+if ($_SERVER['REQUEST_URI'] == '/crearPermiso' && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    $resultado = crearPermiso($data);
+    echo json_encode(["success" => $resultado]);
 }
+
+
 
 // Crear un nuevo rol
 if ($_SERVER['REQUEST_URI'] == '/crearrol' && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
-    $nombre = $data['nombre'];
-  //
-    $resultado = crearRol($nombre);
-    echo json_encode(['success' => $resultado]);
+    $resultado = crearRol($data);
+    echo json_encode(["success" => $resultado]);
 }
 
 // Listar permisos
@@ -96,15 +93,10 @@ if ($_SERVER['REQUEST_URI'] == '/listarroles' && $_SERVER['REQUEST_METHOD'] == '
     $roles = listarRoles();
     echo json_encode($roles);
 }
-if ($_SERVER['REQUEST_URI'] == '/asignarpermisoarol' && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $rolId = $data['rol_id'];
-    $permisoId = $data['permiso_id'];
-
-    // Llamamos a la función para asignar el permiso al rol
-    $resultado = asignarPermisoARol($rolId, $permisoId);
-
-    // Respondemos con el resultado
-    echo json_encode(['success' => $resultado]);
+if ($_SERVER['REQUEST_URI'] == '/asignarRolPermisos' && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    $data = json_decode(file_get_contents("php://input"), true);
+    $resultado =asignarRolesPermisos ($data);
+    echo json_encode(["success" => $resultado]);
 }
+
 

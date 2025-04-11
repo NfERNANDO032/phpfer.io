@@ -8,7 +8,7 @@ function generarJwtToken($usuario) {
     global $key;
     $payload = [
         "id" => $usuario["id"],
-        "email" => $usuario["mail"],//
+        "correo" => $usuario["correo"],//
         "iat" => time(),// Tiempo que inició el token
         "exp" => time() + (60 * 60) // Expira en 1 hora
     ];
